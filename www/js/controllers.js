@@ -39,27 +39,28 @@ angular.module('starter.controllers', [])
 
 .controller('HttpCtrl', function($scope, $rootScope, $http, $ionicPopup) {
   $scope.start = 0;
-  $scope.end = 10;
-  $rootScope.page = ($scope.start / 10) + 1;
+  $rootScope.end = 9;
+  $rootScope.page = ($scope.start / $rootScope.end) + 1;
+  $rootScope.term ='';
   $http({
     method: 'GET', url: 'http://localhost/pt_admin/server/index.php/ionic',
-    params: {start: $scope.start, end: $scope.end}
+    params: {start: $scope.start, end: $rootScope.end, phrase: $rootScope.term}
   }).then(function(response) {
     $scope.content = response.data.rows;
-    $rootScope.total = Math.floor(response.data.total.count);
-    $rootScope.pages = Math.floor($rootScope.total / 10);
+    $rootScope.total = Math.floor(response.data.count);
+    $rootScope.pages = Math.floor($rootScope.total / $rootScope.end);
   });
 
   $scope.nextparams = function(start, end) {
-    $scope.start = Math.floor($scope.start + 10);
-    if ($scope.start > ($rootScope.total - 10)) {
-      $scope.start = Math.floor($rootScope.total - 10);
+    $scope.start = Math.floor($scope.start + $rootScope.end);
+    if ($scope.start > ($rootScope.total - $rootScope.end)) {
+      $scope.start = Math.floor($rootScope.total - $rootScope.end);
     }
-    $scope.end = $scope.end + 10;
-    $rootScope.page = Math.floor(($scope.start / 10)) + 1;
+    // $scope.end = $scope.end + 10;
+    $rootScope.page = Math.floor(($scope.start / $rootScope.end)) + 1;
     $http({
       method: 'GET', url: 'http://localhost/pt_admin/server/index.php/ionic',
-      params: {start: $scope.start, end: $scope.end}
+      params: {start: $scope.start, end: $rootScope.end, phrase: $rootScope.term}
     }).then(function(response) {
       $scope.content = response.data.rows;
     });
@@ -68,18 +69,18 @@ angular.module('starter.controllers', [])
   };
 
   $scope.lastparams = function(start, end) {
-    $scope.start = Math.floor($scope.start - 10);
-    $scope.end = $scope.end - 10;
+    $scope.start = Math.floor($scope.start - $rootScope.end);
+    // $rootScope.end = $rootScope.end - 10;
     if($scope.start < 0) {
       $scope.start = 0;
     }
-    if($scope.end < 10) {
-      $scope.end = 10;
-    }
-    $rootScope.page = Math.floor(($scope.start / 10)) + 1;
+    // if($scope.end < 9) {
+    //   $scope.end = 9;
+    // }
+    $rootScope.page = Math.floor(($scope.start / $rootScope.end)) + 1;
     $http({
       method: 'GET', url: 'http://localhost/pt_admin/server/index.php/ionic',
-      params: {start: $scope.start, end: $scope.end}
+      params: {start: $scope.start, end: $rootScope.end, phrase: $rootScope.term}
     }).then(function(response) {
       $scope.content = response.data.rows;
     });
@@ -88,11 +89,11 @@ angular.module('starter.controllers', [])
   };
 
   $scope.finalparams = function() {
-    $scope.start = Math.floor($rootScope.total - 10);
+    $scope.start = Math.floor($rootScope.total - $rootScope.end);
     $rootScope.page = Math.floor($rootScope.pages);
     $http({
       method: 'GET', url: 'http://localhost/pt_admin/server/index.php/ionic',
-      params: {start: $scope.start, end: $scope.end}
+      params: {start: $scope.start, end: $rootScope.end, phrase: $rootScope.term}
     }).then(function(response) {
       $scope.content = response.data.rows;
     });
@@ -100,10 +101,10 @@ angular.module('starter.controllers', [])
 
   $scope.firstparams = function() {
     $scope.start = 0;
-    $rootScope.page = ($scope.start / 10) + 1;
+    $rootScope.page = ($scope.start / $rootScope.end) + 1;
     $http({
       method: 'GET', url: 'http://localhost/pt_admin/server/index.php/ionic',
-      params: {start: $scope.start, end: $scope.end}
+      params: {start: $scope.start, end: $rootScope.end, phrase: $rootScope.term}
     }).then(function(response) {
       $scope.content = response.data.rows;
     });
@@ -125,7 +126,7 @@ angular.module('starter.controllers', [])
       ent.pass='';
       return;
     }
-    
+
     if(ent.user.length < 3 || ent.pass.length > 45) {
       var alertPopup = $ionicPopup.alert({
         title: 'Error!',
@@ -177,6 +178,19 @@ angular.module('starter.controllers', [])
     ent.user='';
     ent.pass='';
     return;
+  };
+
+  $scope.search = function(phrase) {
+    $scope.phrase = phrase;
+    $http({
+      method: 'GET', url: 'http://localhost/pt_admin/server/index.php/ionic',
+      params: {start: $scope.start, end: $rootScope.end, phrase: $scope.phrase}
+    }).then(function(response) {
+      $scope.content = response.data.rows;
+      $rootScope.total = Math.floor(response.data.count);
+      $rootScope.pages = Math.floor($rootScope.total / $rootScope.end);
+      $rootScope.term = $scope.phrase;
+    });
   };
 })
 
