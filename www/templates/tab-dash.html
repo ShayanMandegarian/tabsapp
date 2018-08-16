@@ -5,10 +5,10 @@
       <form ng-submit="addEntry(ent)" onsubmit=this.reset()>
         <div class="list">
           <label class="item item-input">
-            <textarea rows=3 style="resize:none" placeholder="Username" ng-model="ent.user"></textarea>
+            <input type="text" placeholder="Username" ng-model="ent.user">
           </label>
           <label class="item item-input">
-            <textarea rows=3 style="resize:none" placeholder="Password" ng-model="ent.pass"></textarea>
+            <input type="password" rows=3 placeholder="Password" ng-model="ent.pass">
           </label>
         </div>
         <div class="padding">
