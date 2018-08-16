@@ -24,51 +24,43 @@ angular.module('starter.services', [])
     }
 })
 
-.factory('Chats', function() {
-  // Might use a resource here that returns a JSON array
-
-  // Some fake testing data
-  var chats = [{
-    id: 0,
-    name: 'Ben Sparrow',
-    lastText: 'You on your way?',
-    face: 'img/ben.png'
-  }, {
-    id: 1,
-    name: 'Max Lynx',
-    lastText: 'Hey, it\'s me',
-    face: 'img/max.png'
-  }, {
-    id: 2,
-    name: 'Adam Bradleyson',
-    lastText: 'I should buy a boat',
-    face: 'img/adam.jpg'
-  }, {
-    id: 3,
-    name: 'Perry Governor',
-    lastText: 'Look at my mukluks!',
-    face: 'img/perry.png'
-  }, {
-    id: 4,
-    name: 'Mike Harrington',
-    lastText: 'This is wicked good ice cream.',
-    face: 'img/mike.png'
-  }];
-
+.service('ListService', function($http, $rootScope) {
   return {
-    all: function() {
-      return chats;
+    normalList: function(start, end) {
+      $http({
+        method: 'GET', url: 'http://localhost/pt_admin/server/index.php/ionic',
+        params: {start: start, end: end}
+      }).then(function(response) {
+        $rootScope.content = response.data.rows;
+        $rootScope.total = Math.floor(response.data.count);
+        $rootScope.pages = Math.floor($rootScope.total / $rootScope.end);
+      });
     },
-    remove: function(chat) {
-      chats.splice(chats.indexOf(chat), 1);
+    addList: function(user, pass) {
+      $http({
+        method: 'POST', url: 'http://localhost/pt_admin/server/index.php/ionic',
+        params: {user: user, pass: pass}
+      }).then(function(response) {
+        $rootScope.addContent = response.data.msg;
+      });
     },
-    get: function(chatId) {
-      for (var i = 0; i < chats.length; i++) {
-        if (chats[i].id === parseInt(chatId)) {
-          return chats[i];
-        }
+    searchList: function(phrase, start, end) {
+      if (phrase == '') {
+        ListService.normalList(start, end);
       }
-      return null;
+      $http({
+        method: 'GET', url: 'http://localhost/pt_admin/server/index.php/ionic',
+        params: {start: start, end: end, phrase: phrase}
+      }).then(function(response) {
+        $rootScope.content = response.data.rows;
+        $rootScope.total = Math.floor(response.data.count);
+        $rootScope.pages = Math.floor($rootScope.total / $rootScope.end);
+        if ($rootScope.phrase) {
+          $rootScope.pages++;
+        }
+        // $rootScope.page = $rooScope.page - 1;
+        $rootScope.term = phrase;
+      });
     }
-  };
+  }
 });

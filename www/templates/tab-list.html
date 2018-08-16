@@ -1,0 +1,31 @@
+<ion-view view-title="List">
+  <ion-content class="padding" scroll="false">
+    <div ng-controller="HttpCtrl">
+    <h2>List of entries</h2>
+    <form ng-submit="search(phrase)">
+      <label class="item item-input">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="text" placeholder="Search Username" ng-model="phrase">
+        <input type="submit" hidden/>
+      </label>
+    </form>
+      <ion-list>
+        <ion-item ng-repeat="item in content">
+          ID: {{item.id}}, Username: {{item.username}}, Password: {{item.passwd}}
+      </ion-list>
+      <div class='padding'>
+        <center>
+          <button class="button icon-left ion-arrow-left-a button-royal" ng-click="firstparams()">
+          First</button>
+          <button class="button icon-left ion-arrow-left-b button-royal" ng-click="prevparams()">
+          Previous</button>
+          <font size="7"color="dimgrey">({{page}}/{{pages}})</font>
+          <button class="button icon-right ion-arrow-right-b button-royal" ng-click="nextparams()">
+          Next</button>
+          <button class="button icon-right ion-arrow-right-a button-royal button-royal" ng-click="finalparams()">
+          Last</button>
+        </center>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>
