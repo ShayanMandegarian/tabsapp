@@ -122,6 +122,9 @@ angular.module('starter.httpctrl', [])
     });
     ent.user='';
     ent.pass='';
+    $scope.firstparams();
+    // ListService.normalList(0, $rootScope.end);
+     $rootScope.page = 1;
     return;
   };
 
