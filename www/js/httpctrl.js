@@ -140,6 +140,12 @@ angular.module('starter.httpctrl', [])
 
   $scope.search = function(phrase) {
     $rootScope.phrase = phrase;
+    if (phrase == '') {
+      $rootScope.start = 0;
+      $rootScope.end = 9;
+      $rootScope.page = ($rootScope.start / $rootScope.end) + 1;
+      ListService.normalList($rootScope.start, $rootScope.end);
+    }
     if (phrase != '') {
       $rootScope.start = 0;
       $rootScope.page = 1;

@@ -1,16 +1,30 @@
 angular.module('starter.services', [])
 
-.service('LoginService', function($q) {
+.service('LoginService', function($q, $http, $rootScope) {
     return {
         loginUser: function(name, pw) {
             var deferred = $q.defer();
             var promise = deferred.promise;
+            var allow = false;
 
-            if (name == 'user' && pw == 'secret') {
-                deferred.resolve('Welcome ' + name + '!');
-            } else {
-                deferred.reject('Wrong credentials.');
-            }
+            $http({
+              method: 'GET', url: 'http://localhost/pt_admin/server/index.php/password',
+              params: {user: name, pass: pw}
+            }).then(function(response) {
+              $rootScope.auth = response.data;
+
+              if ($rootScope.auth == 'correct') {
+
+                var allow = true;
+              };
+
+              if (allow) {
+                  deferred.resolve('Welcome ' + name + '!');
+              } else {
+                  deferred.reject('Wrong credentials.');
+              }
+            });
+
             promise.success = function(fn) {
                 promise.then(fn);
                 return promise;
