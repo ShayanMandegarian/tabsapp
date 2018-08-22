@@ -46,7 +46,7 @@ angular.module('starter.services', [])
     },
     searchList: function(phrase, start, end) {
       if (phrase == '') {
-        ListService.normalList(start, end);
+        ListService.normalList(start, end)
       }
       $http({
         method: 'GET', url: 'http://localhost/pt_admin/server/index.php/ionic',

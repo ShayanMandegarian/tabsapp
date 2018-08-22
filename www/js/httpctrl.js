@@ -2,65 +2,77 @@ angular.module('starter.httpctrl', [])
 
 .controller('HttpCtrl', function($scope, $rootScope, $http, $ionicPopup, ListService) {
   // sets the proper parameters and automatically fetches the first page of entries
-  $scope.start = 0;
+  $rootScope.start = 0;
   $rootScope.end = 9;
-  $rootScope.page = ($scope.start / $rootScope.end) + 1; // calculates current page
-  ListService.normalList($scope.start, $rootScope.end);
+  $rootScope.page = ($rootScope.start / $rootScope.end) + 1; // calculates current page
+  ListService.normalList($rootScope.start, $rootScope.end);
 
   // function called when the 'next' button is pressed
   $scope.nextparams = function(start, end) {
-    $scope.start = Math.floor($scope.start + $rootScope.end);
-    if ($scope.start > ($rootScope.total - $rootScope.end)) { //ensures you can't scroll past last entry
-      $scope.start = Math.floor($rootScope.total - $rootScope.end);
+    $rootScope.start = Math.floor($rootScope.start + $rootScope.end);
+    if ($rootScope.start > ($rootScope.total - $rootScope.end)) { //ensures you can't scroll past last entry
+      $rootScope.start = Math.floor($rootScope.total - $rootScope.end);
     }
-    $rootScope.page = Math.floor(($scope.start / $rootScope.end)) + 1; //calculates page
+    $rootScope.page++;
+    if ($rootScope.page > $rootScope.pages) {
+      $rootScope.page = $rootScope.pages;
+    }
+
     if ($rootScope.phrase != '') {
-      ListService.searchList($rootScope.phrase, $scope.start, $rootScope.end);
+      ListService.searchList($rootScope.phrase, $rootScope.start, $rootScope.end);
       return;
     }
-    ListService.normalList($scope.start, $rootScope.end);
+    ListService.normalList($rootScope.start, $rootScope.end);
     return;
   };
 
   // function called when the 'previous' button is pressed
   $scope.prevparams = function(start, end) {
-    $scope.start = Math.floor($scope.start - $rootScope.end);
-    if($scope.start < 0) { //ensures you can't scroll past the first entry
-      $scope.start = 0;
+    $rootScope.start = Math.floor($rootScope.start - $rootScope.end);
+    if($rootScope.start < 0) { //ensures you can't scroll past the first entry
+      $rootScope.start = 0;
     }
-    $rootScope.page = Math.floor(($scope.start / $rootScope.end)) + 1;
+    $rootScope.page--;
+    if ($rootScope.page <= 0) {
+      $rootScope.page = 1;
+    }
+
     if ($rootScope.phrase != '') {
-      ListService.searchList($rootScope.phrase, $scope.start, $rootScope.end);
+      ListService.searchList($rootScope.phrase, $rootScope.start, $rootScope.end);
       return;
     }
-    ListService.normalList($scope.start, $rootScope.end);
+    ListService.normalList($rootScope.start, $rootScope.end);
     return;
   };
 
   // function called when the 'last' button is pressed
   $scope.finalparams = function() {
-    $scope.start = Math.floor($rootScope.total - $rootScope.end);
+    $rootScope.start = Math.floor($rootScope.total - $rootScope.end);
     $rootScope.page = Math.floor($rootScope.pages);
     if ($rootScope.phrase != '') {
-      ListService.searchList($rootScope.phrase, $scope.start, $rootScope.end);
+      ListService.searchList($rootScope.phrase, $rootScope.start, $rootScope.end);
       return;
     }
-    ListService.normalList($scope.start, $rootScope.end);
+    ListService.normalList($rootScope.start, $rootScope.end);
   };
 
   // function called when the 'first' button is pressed
   $scope.firstparams = function() {
-    $scope.start = 0;
-    $rootScope.page = ($scope.start / $rootScope.end) + 1;
+    $rootScope.start = 0;
+    $rootScope.page = ($rootScope.start / $rootScope.end) + 1;
     if ($rootScope.phrase != '') {
-      ListService.searchList($rootScope.phrase, $scope.start, $rootScope.end);
+      ListService.searchList($rootScope.phrase, $rootScope.start, $rootScope.end);
       return;
     }
-    ListService.normalList($scope.start, $rootScope.end);
+    ListService.normalList($rootScope.start, $rootScope.end);
   };
 
   // this function is called when adding a new entry
   $scope.addEntry = function(ent) {
+    $rootScope.start = 0;
+    $rootScope.page = 1;
+    ListService.normalList($rootScope.start, $rootScope.end);
+
     if(!ent.user || !ent.pass) { // if either field is empty...
       var alertPopup = $ionicPopup.alert({
         title: 'Error!',
@@ -122,16 +134,16 @@ angular.module('starter.httpctrl', [])
     });
     ent.user='';
     ent.pass='';
-    $scope.firstparams();
-    // ListService.normalList(0, $rootScope.end);
-     $rootScope.page = 1;
+
     return;
   };
 
   $scope.search = function(phrase) {
     $rootScope.phrase = phrase;
     if (phrase != '') {
-      ListService.searchList(phrase, 0, $rootScope.end);
+      $rootScope.start = 0;
+      $rootScope.page = 1;
+      ListService.searchList(phrase, $rootScope.start, $rootScope.end);
     }
   };
 
